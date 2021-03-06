@@ -9,4 +9,4 @@
 ### DESCRIPTION
 Currently, the basic web app contains a "main" view given by `index.html` under the `/public` directory. Notice how this directory also contains compartments for javascript and css.
 
-If you go to `http://localhost:3000/users` you enter to another part of the website. This is currently and API endpoint, defined in `/routes/users.js`. All of this is sown together in the `app.js` script in the top-level.
+If you go to `http://localhost:3000/users` you enter another part of the website. This is currently and API endpoint, defined in `/routes/users.js`. All of this is sown together in the `app.js` script in the top-level.
