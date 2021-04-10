@@ -1,9 +1,10 @@
 var express = require('express');
 var router = express.Router();
+var path = require('path');
 
-/* GET users listing. */
+/* GET game page */
 router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+  res.sendFile(path.join(__dirname + '/../public/game.html'));
 });
 
 module.exports = router;
