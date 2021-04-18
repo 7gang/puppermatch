@@ -1,3 +1,5 @@
+const { databaseMock } = require('../util');
+
 const Database = require('../db');
 
 const ip = "ip1";
@@ -6,17 +8,8 @@ let points;
 let db;
 
 beforeEach(() => {
-    games = {
-        "ip1": {
-            createdTimestamp: Date.now(),
-            playerCardsTurned: [0, 1, 4],
-            opponentCardsTurned: [5, 3, 6],
-            board: [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7]
-        }
-    }
-    points = {
-        "ip1": 10
-    }
+    games = databaseMock().games;
+    points = databaseMock().points;
     db = new Database(games, points);
   });
 
