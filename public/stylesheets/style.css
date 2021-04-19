@@ -5,15 +5,15 @@
 }
 
 body {
-  background: black;
+  background: rgb(255, 255, 255);
   font: 14px 'Oswald', sans-serif;
   font-size: 1.3 rem;
 }
 
 .container{
-  background: white;
+  background: black;
   background-size: cover;
-  width: 90%;
+  width: 95%;
   margin:auto;
   overflow: auto;
   padding: 0 2rem;
@@ -21,7 +21,7 @@ body {
 
 .top-bar{
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgb(0, 0, 0);
   margin-bottom: 20;
   display: flex;
   flex-direction: column;
@@ -34,9 +34,11 @@ body {
 
 .top-bar p {
   margin: 30 0;
+  color: white;
 }
 .top-bar h1{
   font-size: 150;
+  color:white;
 }
 
 .top-bar ul{
@@ -45,6 +47,7 @@ body {
 }
 
 .top-bar h2 {
+  color:white;
   font-size: 35;
 }
 
@@ -72,9 +75,6 @@ body {
   border: 2px black;
 }
 
-img {
-  width: 100%;
-}
 
 .card{
   display: grid;
@@ -82,15 +82,17 @@ img {
   grid-gap: 2rem;
   background: lightgray;
   margin-bottom: 2rem;
+  border-radius: 20px;
+}
+
+img {
+  width: 100%;
 }
 
 .card h1{
   font-size: 100;
+  margin-left: 20;
 }
-.card:nth-child(odd) h1{
-  margin-left: 30;
-}
-
 
 .card ol {
   font-size: 38;
@@ -104,7 +106,83 @@ img {
 
 .card:nth-child(odd) img {
   order: 2;
+  border-bottom-right-radius: 20px;
+  border-top-right-radius: 20px;
 }
+
+.card:nth-child(even) img {
+  border-bottom-left-radius: 20px;
+  border-top-left-radius: 20px;
+}
+
+.bottom-bar{
+  height: 50vh;
+  background-color: rgb(0, 0, 0);
+  margin-bottom: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10;
+  overflow: auto;
+}
+
+.bottom-bar p {
+  font-size: 50;
+  margin: 30 0;
+  color: white;
+}
+.bottom-bar h1{
+  font-size: 150;
+  color:white;
+}
+
+.bottom-bar ul{
+  list-style: none;
+  margin: 50 0;
+}
+
+.bottom-bar li{
+  margin: 50 0;
+}
+
+.bottom-bar h2 {
+  color:white;
+  font-size: 35;
+}
+
+.bottom-bar h2 span{
+  font-size: 45;
+  color: rgb(34, 33, 109);
+}
+
+.bottom-bar a{
+  font-size: 40;
+  text-decoration: none;
+  color: black;
+  color:rgb(34, 33, 109);
+  padding: 10 40;
+  border-radius: 15px;
+  border: 2px lightblue solid;
+}
+
+.bottom-bar a:hover{
+  background-color: white;
+}
+
+.bottom-bar a.playbutton{
+  color: white;
+  border: 2px lightblue solid;
+  margin: 20;
+}
+
+.bottom-bar a.playbutton:hover{
+  color: black;
+  background-color: white;
+  border: 2px black;
+}
+
 
 @media(max-width: 800px) {
   .card {
