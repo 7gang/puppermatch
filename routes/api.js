@@ -1,9 +1,13 @@
 var express = require('express');
 var router = express.Router();
 const Database = require('../db');
-const { databaseMock } = require('../util');
+const { getDatabaseMock, getDogs } = require('../util');
 
-const db = new Database(databaseMock().games, databaseMock().points);
+let db = null;
+(async function() {
+  const dbMock = await getDatabaseMock();
+  db = new Database(dbMock.games, dbMock.points);
+}());
 
 router.get('/getgame', async function(req, res, next) {
   const ip = req.ip;
@@ -12,6 +16,7 @@ router.get('/getgame', async function(req, res, next) {
   if (gameState === undefined) {
     await db.createNewGame(ip);
     gameState = await db.getGameState(ip);
+    gameState.dogs = await getDogs(gameState.board);
   }
 
   res.send(gameState);

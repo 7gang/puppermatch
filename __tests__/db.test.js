@@ -1,4 +1,4 @@
-const { databaseMock } = require('../util');
+const { getDatabaseMock } = require('../util');
 
 const Database = require('../db');
 
@@ -7,11 +7,14 @@ let games;
 let points;
 let db;
 
-beforeEach(() => {
-    games = databaseMock().games;
-    points = databaseMock().points;
+beforeEach( async done => {
+    const dbMock = await getDatabaseMock();
+    games = dbMock.games;
+    points = dbMock.points;
     db = new Database(games, points);
-  });
+
+    done();
+});
 
 it('initializes', () => {
     expect(db.games).toBeDefined();
@@ -48,7 +51,8 @@ it('saves game state', async done => {
             createdTimestamp: games[ip].createdTimestamp,
             playerCardsTurned: [0, 1, 2],  // <- 4 changed to 2
             opponentCardsTurned: [5, 3, 6],
-            board: [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7]
+            board: [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7],
+            dogs: games[ip].dogs
         }
     }
     expect(alteredGameState).not.toEqual(oldGameState);
@@ -101,7 +105,6 @@ it('randomly distributes opponent moves', async done => {
         moves[iterMoves[1]] = moves[iterMoves[1]] === undefined ? 0 : moves[iterMoves[1]] += 1;
     }
     moves = moves.filter(elem => elem !== undefined);
-    //console.log(moves);
 
     let largestValue = moves[0];
     let smallestValue = moves[0];
@@ -138,7 +141,8 @@ it('does not post invalid player moves', async done => {
         createdTimestamp: games[ip].createdTimestamp,
         playerCardsTurned: [0, 1, 4, 2],
         opponentCardsTurned: [5, 3, 6, 7],
-        board: [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7]
+        board: [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7],
+        dogs: games[ip].dogs
     }
     db.games[ip] = newState
     await db.postPlayerMoves(ip, 0, 1);

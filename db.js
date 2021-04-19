@@ -40,14 +40,14 @@ module.exports = class Database {
         if (await this.hasOngoingGame(ip)) {
             const game = await this.getGameState(ip);
             const discoveredCards = [...game.playerCardsTurned, ...game.opponentCardsTurned];
-            const moreCardsToTurn = discoveredCards.length < game.board.length;
+            const moreCardsToTurn = discoveredCards.length < game.board.length / 2;
 
             if (moreCardsToTurn) {
                 if (game.board[move1] === game.board[move2]) {
                     game.playerCardsTurned.push(move1);
                     game.playerCardsTurned.push(move2);
                 }
-                if (discoveredCards.length < game.board.length / 2) {
+                if (moreCardsToTurn) {
                     const moves = await this.getOpponentMoves(ip);
                     if (game.board[moves[0]] === game.board[moves[1]]) game.opponentCardsTurned.push(game.board[moves[0]]);
                 }

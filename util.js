@@ -1,3 +1,6 @@
+const assert = require('assert');
+const axios = require('axios');
+
 function shuffle(deck) {
     if (!Array.isArray(deck)) throw new Error("Parameter Must Be An Array");
     let randomizedDeck = [];
@@ -10,14 +13,14 @@ function shuffle(deck) {
     return randomizedDeck;
 }
 
-function getMock() {
+async function getMock() {
     return {
         games: {
             "ip1": {
                 createdTimestamp: Date.now(),
                 playerCardsTurned: [0, 1, 4],
                 opponentCardsTurned: [5, 3, 6],
-                board: [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7]
+                board: [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7],
             }
         },
         points: {
@@ -26,15 +29,27 @@ function getMock() {
     }
 }
 
+async function getDogs(board) {
+    assert(board.length % 2 === 0, 'uneven number of cards!');
+    const numberOfDogs = board.length / 2;
+
+    const dogRequest = await axios.get('https://dog.ceo/api/breeds/image/random/' + numberOfDogs, { timeout: 1000 });
+    console.log(dogRequest.data.message);
+
+    return dogRequest.data.message;
+}
+
 module.exports = {
 
     shuffle: shuffle,
 
     generateBoard: () => {
         sortedBoard = [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7]
-        return shuffle(sortedBoard);  // TODO: fetch and bind dog fotos...
+        return shuffle(sortedBoard);
     },
 
-    databaseMock: getMock
+    getDogs: getDogs,
+
+    getDatabaseMock: getMock
 
 }

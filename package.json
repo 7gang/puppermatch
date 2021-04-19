@@ -1,6 +1,6 @@
 {
   "name": "twss-mini-project",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
@@ -8,6 +8,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "axios": "~0.21.1",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "express": "~4.16.1",

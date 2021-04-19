@@ -1,4 +1,4 @@
-const { generateBoard, shuffle } = require('../util');
+const { generateBoard } = require('../util');
 
 it('generates board', () => {
     const board1 = generateBoard();
