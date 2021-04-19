@@ -1,8 +1,113 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-a {
-  color: #00B7FF;
+body {
+  background: black;
+  font: 14px 'Oswald', sans-serif;
+  font-size: 1.3 rem;
+}
+
+.container{
+  background: white;
+  background-size: cover;
+  width: 90%;
+  margin:auto;
+  overflow: auto;
+  padding: 0 2rem;
+}
+
+.top-bar{
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  margin-bottom: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10;
+  overflow: auto;
+}
+
+.top-bar p {
+  margin: 30 0;
+}
+.top-bar h1{
+  font-size: 150;
+}
+
+.top-bar ul{
+  list-style: none;
+  margin: 30 0;
+}
+
+.top-bar h2 {
+  font-size: 35;
+}
+
+.top-bar h2 span{
+  font-size: 45;
+  color: rgb(34, 33, 109);
+}
+
+.top-bar a{
+  font-size: 40;
+  text-decoration: none;
+  color: black;
+  padding: 10 40;
+  border-radius: 15px;
+}
+
+.top-bar a.playbutton{
+  color: white;
+  border: 2px lightblue solid;
+}
+
+.top-bar a.playbutton:hover{
+  color: black;
+  background-color: white;
+  border: 2px black;
+}
+
+img {
+  width: 100%;
+}
+
+.card{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 2rem;
+  background: lightgray;
+  margin-bottom: 2rem;
+}
+
+.card h1{
+  font-size: 100;
+}
+.card:nth-child(odd) h1{
+  margin-left: 30;
+}
+
+
+.card ol {
+  font-size: 40;
+  margin-left: 50;
+}
+
+.card ol span {
+  color:rgb(34, 33, 109);
+}
+
+
+.card:nth-child(odd) img {
+  order: 2;
+}
+
+@media(max-width: 800px) {
+  .card {
+    display: block;
+  }
 }

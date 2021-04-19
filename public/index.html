@@ -1,14 +1,102 @@
 <html>
 
 <head>
-  <title>Express</title>
+  <title>Pupper Match</title>
+  <link rel="shortcut icon" href="images/bg-placeholder.jpg">
   <link rel="stylesheet" href="/stylesheets/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald&display=swap" rel="stylesheet">
 </head>
 
 <body>
-  <h1>Express</h1>
-  <p>Welcome to Express</p>
-  <img src="images/7gang-png-3.png" alt="Example image">
-</body>
+  <main class="container">
+    <div class="top-bar">
+      <h1>Pupper Match</h1>
+      <p>A very ordinary memory game, but with cute puppers. Play against our (very) limited AI
+        and match all the puppers to win the game!
+      </p>
+      <div class="categories">
+        <ul>
+            <li class><a href="#" class="playbutton">Play</a></li>
+        </ul>
+      </div>
+      <h2>Scroll down to learn some <span>pawesome</span> pupper facts!</h2>
+    </div>
 
+    <section class="card" data-aos="fade-right">
+      <img src="/images/dog1.jpg" alt="Not Found">
+      <div>
+        <h1>Pug</h1>
+        <ol>
+          <li>Pugs are an ancient breed. They used to be treated like <span>royalty.</span></li>
+          <li>The perfect pug tail has <span>2</span> curls.</li>
+          <li>Their short noses are a big <span>health issue.</span></li>
+          <li>A group of pugs is called a <span>grumble.</span></li>
+        </ol>
+
+      </div>
+    </section>
+
+    <section class="card" data-aos="fade-left">
+      <img src="/images/dog2.jpg" alt="Not Found">
+      <div>
+        <h1>Cocker Spaniel</h1>
+        <ol>
+          <li>Cockers can be <span>loud</span>, so make sure you train them to know when to be quiet.</li>
+          <li>Be <span>gentle</span> when training them, as they are soft.</li>
+          <li>Their big, beautiful ears can be a <span>health problem</span>, be sure to check them regularly.</li>
+          <li>They are known for their <span>merry</span> temperament.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="card" data-aos="fade-right">
+      <img src="/images/dog3.jpeg" alt="Not Found">
+      <div>
+        <h1>Golden Retriever</h1>
+        <ol>
+          <li>Golden Retrievers <span>love</span> to swim. Take them to a lake regularly.</li>
+          <li>They are considered the 4th <span>smartest</span> dog breed.</li>
+          <li>They are known to <span>take care</span> of other animals.</li>
+          <li>Don't leave your Golden Retriever alone for too long. They are known to become <span>depressed.</span></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="card" data-aos="fade-left">
+      <img src="/images/dog4.jpg" alt="Not Found">
+      <div>
+        <h1>Chihuahua</h1>
+        <ol>
+          <li>The Chihuahua is the world's <span>smallest</span> dog breed.</li>
+          <li>People in Mexico and the USA <span>celebrate</span> the Chihuahua on Cinco de Mayo.</li>
+          <li>Humans and Chihuahuas share the <span>number 1 cause of death</span>: cardiovascular disease.</li>
+          <li>There are <span>deer headed</span> and <span>apple headed</span> Chihuahuas.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="card" data-aos="fade-right">
+      <img src="/images/dog5.jpg" alt="Not Found">
+      <div>
+        <h1>Siberian Husky</h1>
+        <ol>
+          <li>Huskies are perfectly equipped for <span>severe winter weather</span>.</li>
+          <li><span>Heterocromia</span> (differently coloured eyes) can occur relatively often in Huskies.</li>
+          <li>They have <span>super-friendly</span> personalities.</li>
+          <li>Huskies can sprint for hours upon hours without using many of their resources, because of their <span>incredible metabolism.</span></li>
+        </ol>
+      </div>
+    </section>
+
+   
+  </main>
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      offset: 200,
+      duration: 1000
+    });
+  </script>
+</body>
 </html>
