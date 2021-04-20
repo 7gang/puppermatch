@@ -8,15 +8,16 @@ body {
   background: rgb(255, 255, 255);
   font: 14px 'Oswald', sans-serif;
   font-size: 1.3 rem;
+  height: 100%;
 }
 
 .container{
   background: black;
   background-size: cover;
-  width: 95%;
-  margin:auto;
+  margin: 0;
   overflow: auto;
   padding: 0 2rem;
+  min-height: 100%;
 }
 
 .top-bar{
@@ -53,7 +54,7 @@ body {
 
 .top-bar h2 span{
   font-size: 45;
-  color: rgb(34, 33, 109);
+  color: rgb(221, 0, 90);
 }
 
 .top-bar a{
@@ -100,7 +101,7 @@ img {
 }
 
 .card ol span {
-  color:rgb(34, 33, 109);
+  color: rgb(221, 0, 90);
 }
 
 
@@ -154,14 +155,14 @@ img {
 
 .bottom-bar h2 span{
   font-size: 45;
-  color: rgb(34, 33, 109);
+  color: rgb(221, 0, 90);
 }
 
 .bottom-bar a{
   font-size: 40;
   text-decoration: none;
   color: black;
-  color:rgb(34, 33, 109);
+  color: rgb(221, 0, 90);
   padding: 10 40;
   border-radius: 15px;
   border: 2px lightblue solid;
