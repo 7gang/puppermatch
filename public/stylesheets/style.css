@@ -34,11 +34,13 @@ body {
 }
 
 .top-bar p {
+  max-width: 30%;
+  font-size: 30;
   margin: 30 0;
   color: white;
 }
 .top-bar h1{
-  font-size: 150;
+  font-size: 200;
   color:white;
 }
 
@@ -49,7 +51,7 @@ body {
 
 .top-bar h2 {
   color:white;
-  font-size: 35;
+  font-size: 45;
 }
 
 .top-bar h2 span{
@@ -168,20 +170,29 @@ img {
   border: 2px lightblue solid;
 }
 
-.bottom-bar a:hover{
+.btn {
+  font-size: 40;
+  font-weight: bold;
+  text-decoration: none;
+  background-color: black;
+  color: rgb(221, 0, 90);
+  padding: 20 50;
+  border-radius: 15px;
+  border: 2px lightblue solid;
+  margin: 30 0;
+}
+
+.play {
+  color:white;
+}
+
+.btn:hover{
   background-color: white;
 }
 
-.bottom-bar a.playbutton{
-  color: white;
-  border: 2px lightblue solid;
-  margin: 20;
-}
-
-.bottom-bar a.playbutton:hover{
+.play:hover{
   color: black;
   background-color: white;
-  border: 2px black;
 }
 
 
