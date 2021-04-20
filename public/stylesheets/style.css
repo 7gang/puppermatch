@@ -44,11 +44,6 @@ body {
   color:white;
 }
 
-.top-bar ul{
-  list-style: none;
-  margin: 30 0;
-}
-
 .top-bar h2 {
   color:white;
   font-size: 45;
@@ -58,26 +53,6 @@ body {
   font-size: 45;
   color: rgb(221, 0, 90);
 }
-
-.top-bar a{
-  font-size: 40;
-  text-decoration: none;
-  color: black;
-  padding: 10 40;
-  border-radius: 15px;
-}
-
-.top-bar a.playbutton{
-  color: white;
-  border: 2px lightblue solid;
-}
-
-.top-bar a.playbutton:hover{
-  color: black;
-  background-color: white;
-  border: 2px black;
-}
-
 
 .card{
   display: grid;
@@ -141,14 +116,6 @@ img {
   color:white;
 }
 
-.bottom-bar ul{
-  list-style: none;
-  margin: 50 0;
-}
-
-.bottom-bar li{
-  margin: 50 0;
-}
 
 .bottom-bar h2 {
   color:white;
@@ -160,15 +127,6 @@ img {
   color: rgb(221, 0, 90);
 }
 
-.bottom-bar a{
-  font-size: 40;
-  text-decoration: none;
-  color: black;
-  color: rgb(221, 0, 90);
-  padding: 10 40;
-  border-radius: 15px;
-  border: 2px lightblue solid;
-}
 
 .btn {
   font-size: 40;
