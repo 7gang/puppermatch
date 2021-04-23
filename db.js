@@ -66,7 +66,7 @@ module.exports = class Database {
                     array[index1] = -1;
                     array[index2] = -1;
                     return array;
-                }, game.board);
+                }, [ ...game.board]);
             undiscoveredCards.forEach((elem, i, array) => {
                 if (elem !== -1) {
                     undiscoveredIndexes.push(array.indexOf(elem, i));

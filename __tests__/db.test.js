@@ -150,3 +150,20 @@ it('does not post invalid player moves', async done => {
     
     done();
 })
+
+it('does not alter game board on player move', async done => {
+    await db.postPlayerMoves("fake", 0, 1);
+    expect(db.games[ip].board).toEqual(games[ip].board);
+
+    expect(games[ip].board[0]).not.toEqual(games[ip].board[1]);
+    await db.postPlayerMoves(ip, 0, 1);
+    expect(db.games[ip].board).toEqual(games[ip].board);
+
+    expect(games[ip].board[0]).toEqual(games[ip].board[8]);
+    await db.postPlayerMoves(ip, 0, 8);
+    expect(db.games[ip].board).toEqual(games[ip].board);
+    expect(db.games[ip].board[0]).not.toEqual(-1);
+    expect(db.games[ip].board[8]).not.toEqual(-1);
+
+    done();
+})
