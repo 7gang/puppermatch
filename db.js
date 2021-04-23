@@ -80,7 +80,7 @@ module.exports = class Database {
             
             const move1 = undiscoveredIndexes[Math.floor(Math.random() * undiscoveredIndexes.length)];
             let move2 = undiscoveredIndexes[Math.floor(Math.random() * undiscoveredIndexes.length)];
-            if (move1 === undefined) return null;
+            //if (move1 === undefined) return null;
             while (move2 === move1) move2 = undiscoveredIndexes[Math.floor(Math.random() * undiscoveredIndexes.length)];
             return [move1, move2];
         }

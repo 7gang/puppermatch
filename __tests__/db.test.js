@@ -11,7 +11,7 @@ beforeEach( async done => {
     const dbMock = await getDatabaseMock();
     games = dbMock.games;
     points = dbMock.points;
-    db = new Database(games, points);
+    db = new Database({ ...games}, { ...points});
 
     done();
 });
@@ -144,9 +144,9 @@ it('does not post invalid player moves', async done => {
         board: [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7],
         dogs: games[ip].dogs
     }
-    db.games[ip] = newState
+    db.games[ip] = { ...newState};
     await db.postPlayerMoves(ip, 0, 1);
-    expect(db.games[ip]).toEqual(games[ip]);
+    expect(db.games[ip]).toEqual(newState);
     
     done();
 })
