@@ -23,8 +23,21 @@ router.get('/getgame', async function(req, res, next) {
   next();
 });
 
-router.post('/makemove', function(req, res, next) {
-  res.send('update game state and respond with the result of /getgame...');
+router.post('/makemove', async function(req, res, next) {
+  try{
+    const ip = req.ip;
+    const moves = req.body.moves;
+
+    await db.postPlayerMoves(ip, moves[0], moves[1]);
+    const newState = { ...await db.getGameState(ip)};
+    newState.dogs = undefined; newState.board = undefined; newState.createdTimestamp = undefined;
+    res.send(newState);
+  } catch(error) {
+    res.sendStatus(400);
+    console.log(error);
+  }
+
+  next();
 });
 
 module.exports = router;

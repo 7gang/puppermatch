@@ -43,10 +43,7 @@ module.exports = class Database {
             const moreCardsToTurn = discoveredCards.length < game.board.length / 2;
 
             if (moreCardsToTurn) {
-                if (game.board[move1] === game.board[move2]) {
-                    game.playerCardsTurned.push(move1);
-                    game.playerCardsTurned.push(move2);
-                }
+                if (game.board[move1] === game.board[move2]) game.playerCardsTurned.push(game.board[move1]);
                 if (moreCardsToTurn) {
                     const moves = await this.getOpponentMoves(ip);
                     if (game.board[moves[0]] === game.board[moves[1]]) game.opponentCardsTurned.push(game.board[moves[0]]);
