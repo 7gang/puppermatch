@@ -1,11 +1,75 @@
+selectedCards = [];
+const deck = document.querySelectorAll(".card");
+let matches = 0;
 function startGame(gameState) {
-    // TODO: implement game here...
-    console.log('game data retrieved sucessfully: ', gameState);
+    
+    for (var i = 0; i < deck.length; i++){
+        deck[i].innerHTML = `<img src="${gameState.dogs[gameState.board[i]]}" alt="Dog ${i}">`;
+        deck[i].type = gameState.board[i];
+        deck[i].addEventListener("click", displayCard);
+    }
+    console.log(deck);
+    console.log(gameState);
 
     // EXAMPLE: when the user has chosen two different cards, post their move with postMoves and update the gameState with the response of the api call
     postMoves(0, 1)
         .then(newState = console.log(newState) /* <-- updated gameState can be handed off from here */ )
         .catch(error => console.log(error) /* handle if an api call fails for any reason... */ );
+}
+
+var displayCard = function (){
+    this.classList.toggle("selected");
+    cardOpen(this);
+ }
+
+ function cardOpen(card) {
+    selectedCards.push(card);
+    var len = selectedCards.length;
+    if(len === 2){
+        if(selectedCards[0].type === selectedCards[1].type){
+            match();
+        } else {
+            fail();
+        }
+    }
+};
+
+function match() {
+    console.log("MATCHED!");
+    selectedCards[0].classList.add("matched");
+    selectedCards[1].classList.add("matched");
+    selectedCards[0].classList.remove("selected");
+    selectedCards[1].classList.remove("selected");
+    selectedCards = [];
+    matches += 1;
+    if (matches === 8){
+        console.log("You Won!");
+    }
+}
+
+function fail() {
+    console.log("Nope!");
+    selectedCards[0].classList.add("disabled");
+    selectedCards[1].classList.add("disabled");
+    disableAll();
+    setTimeout(function(){
+        selectedCards[0].classList.remove("selected");
+        selectedCards[1].classList.remove("selected");
+        enablenotMatched();
+        selectedCards = [];
+    },1100);
+}
+
+function disableAll(){
+    Array.prototype.filter.call(deck, function(card){
+        card.classList.add('disabled');
+    });
+}
+
+function enablenotMatched(){
+    Array.prototype.filter.call(deck, function(card){
+        card.classList.remove('disabled');
+    });
 }
 
 function postMoves(move1, move2) {
@@ -49,3 +113,5 @@ fetch('http://localhost:3000/api/getgame')
             $container.innerHTML = newHTML;
         } catch(error) { /* disregard any error that occur after the connectionBox has been deleted */ }
     });
+
+//window.onload = startGame();

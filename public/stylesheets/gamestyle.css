@@ -1,0 +1,72 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+body {
+    background: rgb(255, 255, 255);
+    font: 14px 'Oswald', sans-serif;
+    height: 100%;
+}
+  
+.container{
+    background: black;
+    background-size: cover;
+    margin: 0;
+    overflow: auto;
+    display: flex;
+    padding: 0 2rem;
+    min-height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.board{
+    height: 70vh;
+    width: 70vh;
+    display: flex;
+    flex-wrap: wrap;
+    background-color: gray;
+    overflow: auto;
+}
+
+.card {
+    background: #000;
+    color:white;
+    height: 16vh;
+    width: 16vh;
+    margin: 1%;
+    transition: all 0.5s linear;
+} 
+
+.card:hover{
+  border: 10px solid;
+}
+
+.selected{
+  pointer-events: none;
+  border: rgb(32, 182, 231) 10px solid;
+}
+
+.disabled{
+  pointer-events: none;
+}
+
+.matched{
+  pointer-events: none;
+	opacity: 0.1;
+}
+
+
+.show {
+  content: '';
+	-webkit-transform: rotateY( 180deg );
+}
+
+
+img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
