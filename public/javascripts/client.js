@@ -1,12 +1,16 @@
 selectedCards = [];
-const deck = document.querySelectorAll(".card");
+
+const backs = Array.from(document.getElementsByClassName('card'));
+const deck = Array.from(document.getElementsByClassName('card-front'));
+
 let matches = 0;
 function startGame(gameState) {
     
     for (var i = 0; i < deck.length; i++){
         deck[i].innerHTML = `<img src="${gameState.dogs[gameState.board[i]]}" alt="Dog ${i}">`;
-        deck[i].type = gameState.board[i];
-        deck[i].addEventListener("click", displayCard);
+        backs[i].type = gameState.board[i];
+        backs[i].addEventListener("click", flipCard);
+      
     }
     console.log(deck);
     console.log(gameState);
@@ -17,15 +21,15 @@ function startGame(gameState) {
         .catch(error => console.log(error) /* handle if an api call fails for any reason... */ );
 }
 
-var displayCard = function (){
-    this.classList.toggle("selected");
+
+var flipCard = function (){
+    this.classList.add("visible");
     cardOpen(this);
  }
 
  function cardOpen(card) {
     selectedCards.push(card);
-    var len = selectedCards.length;
-    if(len === 2){
+    if(selectedCards.length === 2){
         if(selectedCards[0].type === selectedCards[1].type){
             match();
         } else {
@@ -53,21 +57,21 @@ function fail() {
     selectedCards[1].classList.add("disabled");
     disableAll();
     setTimeout(function(){
-        selectedCards[0].classList.remove("selected");
-        selectedCards[1].classList.remove("selected");
+        selectedCards[0].classList.remove("disabled", "visible");
+        selectedCards[1].classList.remove("disabled", "visible");
         enablenotMatched();
         selectedCards = [];
     },1100);
 }
 
 function disableAll(){
-    Array.prototype.filter.call(deck, function(card){
+    Array.prototype.filter.call(backs, function(card){
         card.classList.add('disabled');
     });
 }
 
 function enablenotMatched(){
-    Array.prototype.filter.call(deck, function(card){
+    Array.prototype.filter.call(backs, function(card){
         card.classList.remove('disabled');
     });
 }
