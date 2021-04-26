@@ -86,6 +86,11 @@ it('creates new game state from ongoing game', async done => {
     done();
 })
 
+it('only creates new game if all cards have been matched', async done => {
+    // ...
+    done();
+})
+
 it('gets opponent moves', async done => {
     expect(await db.getOpponentMoves("fake")).toEqual(null);
 
@@ -126,6 +131,11 @@ it('posts player moves', async done => {
     await db.postPlayerMoves(ip, 7, 15);
     expect(db.games[ip].playerCardsTurned[3]).toEqual(7);
 
+    done();
+})
+
+it('does not post a match that has already been posted', async done => {
+    // ...
     done();
 })
 

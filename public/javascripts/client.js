@@ -44,11 +44,17 @@ function match() {
     selectedCards[1].classList.add("matched");
     selectedCards[0].classList.remove("selected");
     selectedCards[1].classList.remove("selected");
-    selectedCards = [];
-    matches += 1;
-    if (matches === 8){
-        console.log("You Won!");
-    }
+
+    postMoves(selectedCards[0], selectedCards[1])
+        .then(newState => {
+            console.log(newState) /* <-- updated gameState can be handed off from here */ 
+            selectedCards = [];
+            matches += 1;
+            if (matches === 8){
+                console.log("You Won!");
+            }
+        })
+        .catch(error => console.log(error) /* handle if an api call fails for any reason... */ );
 }
 
 function fail() {

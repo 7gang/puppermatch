@@ -28,6 +28,16 @@ module.exports = class Database {
         return this.games[ip];
     }
 
+    gameHasEnded(gameState) {
+        const game = gameState
+        if (game) {
+            console.log([...game.playerCardsTurned, ...game.opponentCardsTurned].length);
+            console.log((game.board.length / 2));
+            return [...game.playerCardsTurned, ...game.opponentCardsTurned].length === (game.board.length / 2);
+        }
+        return false;
+    }
+
     async getGameState(ip) {
         return this.games[ip];
     }

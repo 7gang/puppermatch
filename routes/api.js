@@ -13,7 +13,9 @@ router.get('/getgame', async function(req, res, next) {
   const ip = req.ip;
   
   let gameState = await db.getGameState(ip);
-  if (gameState === undefined) {
+  //console.log(db.gameHasEnded(ip));
+  if (gameState === undefined || db.gameHasEnded(gameState)) {
+    console.log("TRIGGERED!");
     await db.createNewGame(ip);
     gameState = await db.getGameState(ip);
     gameState.dogs = await getDogs(gameState.board);
