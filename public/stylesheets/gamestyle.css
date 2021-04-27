@@ -22,9 +22,15 @@ body {
 }
 
 .container h1{
-  font-size: 10vw;
+  font-size: 6vw;
   color:white;
   margin-bottom: 30px;
+}
+
+.container p{
+  font-size: 2vw;
+  color:white;
+  margin-bottom: 15px;
 }
 
 .board{

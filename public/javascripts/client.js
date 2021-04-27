@@ -4,9 +4,13 @@ var gameState;
 var backs = Array.from(document.getElementsByClassName('card'));
 var deck = Array.from(document.getElementsByClassName('card-front'));
 
+pscore = document.getElementById("pscore");
+prompt = document.getElementById("prompt");
+
 let matches = 0;
 function startGame(gs) {
     gameState = gs;
+    pscore.innerHTML = `Lifetime matches: ${gameState.points}`;
     //console.log(gameState);
     //console.log([...gameState.playerCardsTurned, ...gameState.opponentCardsTurned]);
     var previouslyMatchedCards = backs.filter((card, i) => [...gameState.playerCardsTurned, ...gameState.opponentCardsTurned].indexOf(gameState.board[i]) !== -1);
@@ -26,32 +30,31 @@ function startGame(gs) {
     console.log(gameState);*/
 }
 
-
 var flipCard = function (){
     cardOpen(this);
  }
 
 function cardOpen(card, isPlayer = true) {
   card.classList.add("visible");
+  card.classList.add("disabled");
   selectedCards.push(card);
   //console.log(selectedCards);
   if(selectedCards.length === 2){
     if (isPlayer /*&& selectedCards[1] !== -1*/) postMoves(backs.indexOf(selectedCards[0]), backs.indexOf(selectedCards[1]))
       .then(newState => {
         //selectedCards = [];
+        pscore.innerHTML = `Lifetime matches: ${newState.points}`; // insert the score from the db here
         console.log(newState);
+        if([...newState.playerCardsTurned, ...newState.opponentCardsTurned].length === 8){
+            prompt.innerHTML = "Game over! Refresh to start a new game.";
+        }
+
         performOpponentMove(newState.opponentMoves);
         gameState = newState;
       })
       .catch(error => console.log(error) /* handle if an api call fails for any reason... */ );
     if(selectedCards[0].type === selectedCards[1].type){
       match();
-      if (isPlayer) {
-        matches += 1;
-        if (matches === 8){
-            console.log("You Won!");
-        }
-      }
     } else {
       fail();
     }
