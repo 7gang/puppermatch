@@ -54,7 +54,16 @@ function cardOpen(card, isPlayer = true) {
       })
       .catch(error => console.log(error) /* handle if an api call fails for any reason... */ );
     if(selectedCards[0].type === selectedCards[1].type){
-      match();
+        if (isPlayer){
+            selectedCards[0].classList.add("playermatched");
+            selectedCards[1].classList.add("playermatched");
+        } else {
+            selectedCards[0].classList.add("matched");
+            selectedCards[1].classList.add("matched");
+        }
+        selectedCards[0].classList.remove("selected");
+        selectedCards[1].classList.remove("selected");
+        selectedCards = [];
     } else {
       fail();
     }
@@ -62,14 +71,6 @@ function cardOpen(card, isPlayer = true) {
   }
 };
 
-function match() {
-    //console.log("MATCHED!");
-    selectedCards[0].classList.add("matched");
-    selectedCards[1].classList.add("matched");
-    selectedCards[0].classList.remove("selected");
-    selectedCards[1].classList.remove("selected");
-    selectedCards = [];
-}
 
 function fail() {
     //console.log("Nope!");

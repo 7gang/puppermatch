@@ -17,6 +17,7 @@ body {
     margin: 0;
     padding: 0 2rem;
     min-height: 100%;
+    width: 100%;
     text-align: center;
     justify-content: center;
 }
@@ -34,6 +35,7 @@ body {
 }
 
 .board{
+    justify-content: center;
     height: 70vh;
     width: 70vh;
     margin-left: auto;
@@ -61,7 +63,7 @@ body {
   width: 100%;
   height: 100%;
   backface-visibility: hidden;
-  transition: all 0.5s linear;
+  transition: all 0.2s linear;
 }
 
 .card-front{
@@ -72,10 +74,6 @@ body {
   width: 60%;
   height: 60%;
   margin-top: 20%;
-}
-
-.card-front:hover{
-  border: 10px solid;
 }
 
 .card.visible .card-back {
@@ -97,15 +95,20 @@ body {
 
 .matched{
   pointer-events: none;
-	opacity: 0.1;
+	opacity: 0.5;
+  border: 3px red solid;
 }
 
+.playermatched{
+  pointer-events: none;
+	opacity: 0.5;
+  border: 3px green solid;
+}
 
 .show {
   content: '';
-	-webkit-transform: rotateY( 180deg );
+	transform: rotateY( 180deg );
 }
-
 
 img {
     width: 100%;
