@@ -1,10 +1,20 @@
-selectedCards = [];
+var selectedCards = [];
+var gameState;
 
-const backs = Array.from(document.getElementsByClassName('card'));
-const deck = Array.from(document.getElementsByClassName('card-front'));
+var backs = Array.from(document.getElementsByClassName('card'));
+var deck = Array.from(document.getElementsByClassName('card-front'));
 
 let matches = 0;
-function startGame(gameState) {
+function startGame(gs) {
+    gameState = gs;
+    //console.log(gameState);
+    //console.log([...gameState.playerCardsTurned, ...gameState.opponentCardsTurned]);
+    var previouslyMatchedCards = backs.filter((card, i) => [...gameState.playerCardsTurned, ...gameState.opponentCardsTurned].indexOf(gameState.board[i]) !== -1);
+    //console.log(previouslyMatchedCards);
+    previouslyMatchedCards.forEach(card => {
+      card.classList.add("matched")
+      card.classList.add("visible");
+    });
     
     for (var i = 0; i < deck.length; i++){
         deck[i].innerHTML = `<img src="${gameState.dogs[gameState.board[i]]}" alt="Dog ${i}">`;
@@ -12,61 +22,62 @@ function startGame(gameState) {
         backs[i].addEventListener("click", flipCard);
       
     }
-    console.log(deck);
-    console.log(gameState);
-
-    // EXAMPLE: when the user has chosen two different cards, post their move with postMoves and update the gameState with the response of the api call
-    postMoves(0, 1)
-        .then(newState = console.log(newState) /* <-- updated gameState can be handed off from here */ )
-        .catch(error => console.log(error) /* handle if an api call fails for any reason... */ );
+    /*console.log(deck);
+    console.log(gameState);*/
 }
 
 
 var flipCard = function (){
-    this.classList.add("visible");
     cardOpen(this);
  }
 
- function cardOpen(card) {
-    selectedCards.push(card);
-    if(selectedCards.length === 2){
-        if(selectedCards[0].type === selectedCards[1].type){
-            match();
-        } else {
-            fail();
+function cardOpen(card, isPlayer = true) {
+  card.classList.add("visible");
+  selectedCards.push(card);
+  //console.log(selectedCards);
+  if(selectedCards.length === 2){
+    if (isPlayer /*&& selectedCards[1] !== -1*/) postMoves(backs.indexOf(selectedCards[0]), backs.indexOf(selectedCards[1]))
+      .then(newState => {
+        //selectedCards = [];
+        console.log(newState);
+        performOpponentMove(newState.opponentMoves);
+        gameState = newState;
+      })
+      .catch(error => console.log(error) /* handle if an api call fails for any reason... */ );
+    if(selectedCards[0].type === selectedCards[1].type){
+      match();
+      if (isPlayer) {
+        matches += 1;
+        if (matches === 8){
+            console.log("You Won!");
         }
+      }
+    } else {
+      fail();
     }
+    //console.log(backs.indexOf(selectedCards[0]),backs.indexOf(selectedCards[1]));
+  }
 };
 
 function match() {
-    console.log("MATCHED!");
+    //console.log("MATCHED!");
     selectedCards[0].classList.add("matched");
     selectedCards[1].classList.add("matched");
     selectedCards[0].classList.remove("selected");
     selectedCards[1].classList.remove("selected");
-
-    postMoves(selectedCards[0], selectedCards[1])
-        .then(newState => {
-            console.log(newState) /* <-- updated gameState can be handed off from here */ 
-            selectedCards = [];
-            matches += 1;
-            if (matches === 8){
-                console.log("You Won!");
-            }
-        })
-        .catch(error => console.log(error) /* handle if an api call fails for any reason... */ );
+    selectedCards = [];
 }
 
 function fail() {
-    console.log("Nope!");
+    //console.log("Nope!");
+    //console.log(selectedCards[0].classList);
     selectedCards[0].classList.add("disabled");
     selectedCards[1].classList.add("disabled");
     disableAll();
     setTimeout(function(){
-        selectedCards[0].classList.remove("disabled", "visible");
-        selectedCards[1].classList.remove("disabled", "visible");
-        enablenotMatched();
-        selectedCards = [];
+      selectedCards.forEach(card => card.classList.remove("disabled", "visible"));
+      enablenotMatched();
+      selectedCards = [];
     },1100);
 }
 
@@ -80,6 +91,36 @@ function enablenotMatched(){
     Array.prototype.filter.call(backs, function(card){
         card.classList.remove('disabled');
     });
+}
+
+function performOpponentMove(moves) {
+  if (!moves) return;
+  card1 = backs[moves[0]];
+  card2 = backs[moves[1]];
+  /*console.log("backs: " + backs);
+  console.log("backs[0]: " + backs[0]);*/
+  /*if (match) {
+    console.log("NOT RAND");
+    //console.log(backs);
+    var types = backs.filter(elem => elem.type === match);
+    card1 = types[0];
+    card2 = types[1];
+  }
+  else {
+    console.log("RAND");
+    // TODO: make this take into account cards that are already turned...
+    var randInt1 = Math.floor(Math.random() * backs.length);
+    var randInt2 = randInt1;
+    while (randInt1 === randInt2) randInt2 = Math.floor(Math.random() * backs.length);
+    card1 = backs[randInt1];
+    card2 = backs[randInt2];
+  }*/
+  /*selectedCards.push(card1);
+  selectedCards.push(card2);*/
+  /*console.log(card1);
+  console.log(card2);*/
+  cardOpen(card1, false);
+  cardOpen(card2, false);
 }
 
 function postMoves(move1, move2) {

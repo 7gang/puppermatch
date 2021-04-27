@@ -30,9 +30,9 @@ router.post('/makemove', async function(req, res, next) {
     const ip = req.ip;
     const moves = req.body.moves;
 
-    await db.postPlayerMoves(ip, moves[0], moves[1]);
-    const newState = { ...await db.getGameState(ip)};
+    const newState = await db.postPlayerMoves(ip, moves[0], moves[1]);
     newState.dogs = undefined; newState.board = undefined; newState.createdTimestamp = undefined;
+    console.log(newState);
     res.send(newState);
   } catch(error) {
     res.sendStatus(400);

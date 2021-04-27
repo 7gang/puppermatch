@@ -31,8 +31,9 @@ module.exports = class Database {
     gameHasEnded(gameState) {
         const game = gameState
         if (game) {
+            /*console.log([...game.playerCardsTurned, ...game.opponentCardsTurned][0]);
             console.log([...game.playerCardsTurned, ...game.opponentCardsTurned].length);
-            console.log((game.board.length / 2));
+            console.log((game.board.length / 2));*/
             return [...game.playerCardsTurned, ...game.opponentCardsTurned].length === (game.board.length / 2);
         }
         return false;
@@ -46,45 +47,76 @@ module.exports = class Database {
         if (await this.hasOngoingGame(ip)) this.games[ip] = newGameState;
     }
 
+    moreCardsToTurn(game) {
+        const discoveredCards = [...game.playerCardsTurned, ...game.opponentCardsTurned];
+        return discoveredCards.length < game.board.length / 2;
+    }
+
+    cardIsNotAlreadyTurned(game, card) {
+        const discoveredCards = [...game.playerCardsTurned, ...game.opponentCardsTurned];
+        return discoveredCards.indexOf(game.board[card]) === -1
+    }
+
     async postPlayerMoves(ip, move1, move2) {
         if (await this.hasOngoingGame(ip)) {
             const game = await this.getGameState(ip);
-            const discoveredCards = [...game.playerCardsTurned, ...game.opponentCardsTurned];
-            const moreCardsToTurn = discoveredCards.length < game.board.length / 2;
+            //console.log("moves: " + game.board[move1] + ", " + game.board[move2]);
+            //console.log("board: " + game.board);
 
-            if (moreCardsToTurn) {
-                if (game.board[move1] === game.board[move2]) game.playerCardsTurned.push(game.board[move1]);
-                if (moreCardsToTurn) {
-                    const moves = await this.getOpponentMoves(ip);
-                    if (game.board[moves[0]] === game.board[moves[1]]) game.opponentCardsTurned.push(game.board[moves[0]]);
+            if (this.moreCardsToTurn(game)) {
+                let opponentMoves;
+                if (game.board[move1] === game.board[move2] && this.cardIsNotAlreadyTurned(game, move2)) {
+                    //console.log("TRIG");
+                    //console.log(game.playerCardsTurned);
+                    game.playerCardsTurned.push(game.board[move1]);
+                    //console.log(game.opponentCardsTurned);
+                }
+                if (this.moreCardsToTurn(game)) {
+                    //console.log("executed!");
+                    opponentMoves = await this.getOpponentMoves(ip, move1, move2);
+                    //console.log("opponent moves: " + moves[0] + ", " + moves[1]);
+                    if (game.board[opponentMoves[0]] === game.board[opponentMoves[1]] && this.cardIsNotAlreadyTurned(game, opponentMoves[1])) 
+                        game.opponentCardsTurned.push(game.board[opponentMoves[0]]);
                 }
                 await this.saveGameState(ip, game);
+                let newState = { ...await this.getGameState(ip)};
+                //console.log("newState: " + newState);
+                newState.opponentMoves = opponentMoves;
+                return newState;
             }
+            return game;
         }
     }
 
-    async getOpponentMoves(ip) {
+    async getOpponentMoves(ip, playerMove1, playerMove2) {
         if (await this.hasOngoingGame(ip)) {
             const game = await this.getGameState(ip);
 
             const discoveredCards = [...game.playerCardsTurned, ...game.opponentCardsTurned];
+            //console.log("discorveredCards: " + discoveredCards);
             let undiscoveredIndexes = []
             let undiscoveredCards = [ ...discoveredCards ]
-                .reduce((array, elem) => {
+                .reduce((array, elem, i) => {
                     const index1 = array.indexOf(elem);
                     const index2 = array.indexOf(elem, index1 + 1);
                     array[index1] = -1;
                     array[index2] = -1;
+                    //if (i === playerMove1 && i === playerMove2) array[i] = -1
                     return array;
                 }, [ ...game.board]);
             undiscoveredCards.forEach((elem, i, array) => {
-                if (elem !== -1) {
+                //console.log(i !== playerMove1 && i !== playerMove2);
+                if (elem !== -1 && i !== playerMove1 && i !== playerMove2) {
                     undiscoveredIndexes.push(array.indexOf(elem, i));
                 }
             })
             undiscoveredCards = undiscoveredCards.filter(elem => elem !== -1);
+            //console.log("undiscovered cards: " + undiscoveredCards);
+            //console.log(game.board.length - discoveredCards.length === 2);
+            /*console.log("playerMoves: " + playerMove1, playerMove2);
+            console.log("undiscoveredIndexes: " + undiscoveredIndexes);*/
             
-            if (game.board.length - undiscoveredCards.length === 2) return (undiscoveredIndexes[0], undiscoveredIndexes[1]);
+            if (game.board.length - discoveredCards.length === 2) return (undiscoveredIndexes[0], undiscoveredIndexes[1]);
 
             undiscoveredIndexes = shuffle(undiscoveredIndexes);
             
@@ -92,6 +124,7 @@ module.exports = class Database {
             let move2 = undiscoveredIndexes[Math.floor(Math.random() * undiscoveredIndexes.length)];
             //if (move1 === undefined) return null;
             while (move2 === move1) move2 = undiscoveredIndexes[Math.floor(Math.random() * undiscoveredIndexes.length)];
+            //console.log(move1, move2);
             return [move1, move2];
         }
         return null;

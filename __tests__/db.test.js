@@ -94,7 +94,7 @@ it('only creates new game if all cards have been matched', async done => {
 it('gets opponent moves', async done => {
     expect(await db.getOpponentMoves("fake")).toEqual(null);
 
-    const moves = await db.getOpponentMoves(ip);
+    const moves = await db.getOpponentMoves(ip, 0, 1);
     expect(moves[0]).toBeDefined();
     expect(moves[1]).toBeDefined();
     expect(moves[0]).not.toEqual(moves[1]);
@@ -105,21 +105,27 @@ it('gets opponent moves', async done => {
 it('randomly distributes opponent moves', async done => {
     let moves = [];
     for (i = 0; i < 10000; i++) {
-        let iterMoves = await db.getOpponentMoves(ip);
+        let iterMoves = await db.getOpponentMoves(ip, 0, 1);
         moves[iterMoves[0]] = moves[iterMoves[0]] === undefined ? 0 : moves[iterMoves[0]] += 1;
         moves[iterMoves[1]] = moves[iterMoves[1]] === undefined ? 0 : moves[iterMoves[1]] += 1;
     }
     moves = moves.filter(elem => elem !== undefined);
+    //console.log(moves);
 
     let largestValue = moves[0];
     let smallestValue = moves[0];
-    moves.forEach(elem => {
-        if (elem > largestValue) largestValue = elem;
-        else if (elem < smallestValue) smallestValue = elem;
+    moves.forEach((elem, i) => {
+        if (elem > largestValue /*&& i !== 0 && i !== 1*/) largestValue = elem;
+        else if (elem < smallestValue /*&& i !== 0 && i !== 1*/) smallestValue = elem;
     });
 
     expect(largestValue - smallestValue < 500).toBeTruthy();
 
+    done();
+})
+
+it('does not make opponent moves that the player has already made', async done => {
+    // ...
     done();
 })
 
