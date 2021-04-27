@@ -40,7 +40,9 @@ module.exports = class Database {
     }
 
     async getGameState(ip) {
-        return this.games[ip];
+        const gameState = this.games[ip];
+        if (gameState) gameState.points = this.points[ip];
+        return gameState;
     }
 
     async saveGameState(ip, newGameState) {
@@ -69,6 +71,7 @@ module.exports = class Database {
                     //console.log("TRIG");
                     //console.log(game.playerCardsTurned);
                     game.playerCardsTurned.push(game.board[move1]);
+                    this.points[ip]++;
                     //console.log(game.opponentCardsTurned);
                 }
                 if (this.moreCardsToTurn(game)) {

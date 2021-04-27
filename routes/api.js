@@ -13,7 +13,7 @@ router.get('/getgame', async function(req, res, next) {
   const ip = req.ip;
   
   let gameState = await db.getGameState(ip);
-  //console.log(db.gameHasEnded(ip));
+  console.log(gameState);
   if (gameState === undefined || db.gameHasEnded(gameState)) {
     console.log("TRIGGERED!");
     await db.createNewGame(ip);
