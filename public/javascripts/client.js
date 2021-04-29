@@ -98,33 +98,36 @@ function enablenotMatched(){
 }
 
 function performOpponentMove(moves) {
-  if (!moves) return;
-  card1 = backs[moves[0]];
-  card2 = backs[moves[1]];
-  /*console.log("backs: " + backs);
-  console.log("backs[0]: " + backs[0]);*/
-  /*if (match) {
-    console.log("NOT RAND");
-    //console.log(backs);
-    var types = backs.filter(elem => elem.type === match);
-    card1 = types[0];
-    card2 = types[1];
-  }
-  else {
-    console.log("RAND");
-    // TODO: make this take into account cards that are already turned...
-    var randInt1 = Math.floor(Math.random() * backs.length);
-    var randInt2 = randInt1;
-    while (randInt1 === randInt2) randInt2 = Math.floor(Math.random() * backs.length);
-    card1 = backs[randInt1];
-    card2 = backs[randInt2];
-  }*/
-  /*selectedCards.push(card1);
-  selectedCards.push(card2);*/
-  /*console.log(card1);
-  console.log(card2);*/
-  cardOpen(card1, false);
-  cardOpen(card2, false);
+  setTimeout(function() {
+    if (!moves) return;
+    card1 = backs[moves[0]];
+    card2 = backs[moves[1]];
+    /*console.log("backs: " + backs);
+    console.log("backs[0]: " + backs[0]);*/
+    /*if (match) {
+      console.log("NOT RAND");
+      //console.log(backs);
+      var types = backs.filter(elem => elem.type === match);
+      card1 = types[0];
+      card2 = types[1];
+    }
+    else {
+      console.log("RAND");
+      // TODO: make this take into account cards that are already turned...
+      var randInt1 = Math.floor(Math.random() * backs.length);
+      var randInt2 = randInt1;
+      while (randInt1 === randInt2) randInt2 = Math.floor(Math.random() * backs.length);
+      card1 = backs[randInt1];
+      card2 = backs[randInt2];
+    }*/
+    /*selectedCards.push(card1);
+    selectedCards.push(card2);*/
+    /*console.log(card1);
+    console.log(card2);*/
+    cardOpen(card1, false);
+    cardOpen(card2, false);
+  }, 500);
+
 }
 
 function postMoves(move1, move2) {
