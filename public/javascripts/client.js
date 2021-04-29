@@ -12,13 +12,22 @@ function startGame(gs) {
     gameState = gs;
     pscore.innerHTML = `Lifetime matches: ${gameState.points}`;
     //console.log(gameState);
-    //console.log([...gameState.playerCardsTurned, ...gameState.opponentCardsTurned]);
-    var previouslyMatchedCards = backs.filter((card, i) => [...gameState.playerCardsTurned, ...gameState.opponentCardsTurned].indexOf(gameState.board[i]) !== -1);
+    //console.log([...gameState.playerCardsTurned, ...gameState.opponentCardsTurned]); gameState.opponentCardsTurned
+    /*var previouslyMatchedCards = */backs.forEach((card, i) => {
+      if (gameState.playerCardsTurned.indexOf(gameState.board[i]) !== -1) {
+        card.classList.add("playermatched")
+        card.classList.add("visible");
+      }
+      else if (gameState.opponentCardsTurned.indexOf(gameState.board[i]) !== -1) {
+        card.classList.add("matched")
+        card.classList.add("visible");
+      }
+    });
     //console.log(previouslyMatchedCards);
-    previouslyMatchedCards.forEach(card => {
+    /*previouslyMatchedCards.forEach(card => {
       card.classList.add("matched")
       card.classList.add("visible");
-    });
+    });*/
     
     for (var i = 0; i < deck.length; i++){
         deck[i].innerHTML = `<img src="${gameState.dogs[gameState.board[i]]}" alt="Dog ${i}">`;
@@ -48,10 +57,12 @@ function cardOpen(card, isPlayer = true) {
         if([...newState.playerCardsTurned, ...newState.opponentCardsTurned].length === 8){
             prompt.innerHTML = "Game over! Refresh to start a new game.";
         }
+        disableAll()
         setTimeout(function(){
+          enablenotMatched()
           performOpponentMove(newState.opponentMoves);
           gameState = newState;
-        },1300);
+        }, 1000);
         
       })
       .catch(error => console.log(error) /* handle if an api call fails for any reason... */ );
