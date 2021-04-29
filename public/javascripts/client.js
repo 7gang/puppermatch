@@ -55,7 +55,9 @@ function cardOpen(card, isPlayer = true) {
         pscore.innerHTML = `Lifetime matches: ${newState.points}`; // insert the score from the db here
         console.log(newState);
         if([...newState.playerCardsTurned, ...newState.opponentCardsTurned].length === 8){
-            prompt.innerHTML = "Game over! Refresh to start a new game.";
+            setTimeout(function(){
+              prompt.innerHTML = "Game over! Refresh to start a new game.";
+            }, 1300);
         }
         disableAll()
         setTimeout(function(){
