@@ -1,5 +1,6 @@
 var selectedCards = [];
 var gameState;
+var host = 'pupper.papupa.com';  // depends on remote servers to be reachable!
 
 var backs = Array.from(document.getElementsByClassName('card'));
 var deck = Array.from(document.getElementsByClassName('card-front'));
@@ -126,7 +127,7 @@ function performOpponentMove(moves) {
 function postMoves(move1, move2) {
   // return a promise, eventually returning the updated game state as the result of the player's moves
     return new Promise((resolve, reject) => {
-        fetch('http://pupper.papupa.com/api/makemove', {
+        fetch('http://' + host + '/api/makemove', {
             method: 'POST',
             mode: 'cors',
             cache: 'no-cache',
@@ -141,7 +142,7 @@ function postMoves(move1, move2) {
     });
 };
 
-fetch('http://pupper.papupa.com/api/getgame')
+fetch('http://' + host + '/api/getgame')
     .then(result => result.json())
     .then(data => {
         var elem = document.getElementById("connectionBox");

@@ -73,12 +73,17 @@ module.exports = class Database {
 
     gameHasEnded(gameState) {
         // whether an ongoing game should be considered finished, depending on how many cards have been matched to this point
-        const game = gameState
-        if (game) {
-            // for a game to be done, the amount of cards matched must equal half the board size, since there is exactly two of every card
-            return [...game.playerCardsTurned, ...game.opponentCardsTurned].length === (game.board.length / 2);
+        try {
+            const game = gameState
+            if (game) {
+                // for a game to be done, the amount of cards matched must equal half the board size, since there is exactly two of every card
+                return [...game.playerCardsTurned, ...game.opponentCardsTurned].length === (game.board.length / 2);
+            }
+            return true;
         }
-        return false;
+        catch(error) {
+            return true;
+        }
     }
 
     async getGameState(ip) {
