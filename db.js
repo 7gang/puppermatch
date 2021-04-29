@@ -4,20 +4,22 @@ const { mongodb_connection_string } = require('./config.json');
 
 module.exports = class Database {
 
-    games = {};
-    points = {};
-    moves = {};
+    games = {};     // game states, dictionary mapped to ip address
+    points = {};    // lifetime player points, dictionary mapped to ip address
+    moves = {};     // all moves performed by both player and ai, dictionary mapped to ip address
 
     constructor(games, points) {
         this.games = games;
         this.points = points;
 
+        // connection to MongoDB Atlas cluster instance
         mongoose.connect(mongodb_connection_string, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             useFindAndModify: false
         }).then(() => console.log('mongoose connected!'));
 
+        // define mongoose model (and schema)
         this.HighScore = mongoose.model('HighScore', mongoose.Schema({
             _id: String,
             value: Number
@@ -25,36 +27,41 @@ module.exports = class Database {
     }
 
     async getPoints(ip) {
+        // get player points from MongoDB
         let result = await this.HighScore.find({ _id: ip });
-        //console.log(result[0]);
         if (!result || !result[0]) {
+            // if no player exists, create it
             const NewHighScore = new this.HighScore({
                 _id: ip,
                 value: 1
             });
+            // save and update player score
             await NewHighScore.save(error => console.log(error));
             result = await this.HighScore.find({ _id: ip });
         }
-        //console.log(result[0].value);
-        //if (this.games[ip]) console.log('Actual value: ' + this.games[ip].playerCardsTurned.length);
+        // return high score value
         return result[0].value;
     }
 
     async setPoints(ip, val) {
-        //console.log('Should be value: ' + val);
+        // update the score of a player in the MongoDB remote
         await this.HighScore.findByIdAndUpdate({ _id: ip }, { value: val });
     }
 
     async hasOngoingGame(ip) {
+        // whether there is an ongoing game associated with a given ip address
         const result = await this.getGameState(ip);
         return result !== undefined;
     }
 
     async createNewGame(ip) {
+        // create a new game associated with the given ip address
         const oldPoints = await this.getPoints(ip);
+        // if there is currently an ongoing game, it is ended and the points from it are catalogues before restarting
         if (await this.hasOngoingGame(ip)) await this.setPoints(ip, oldPoints + this.games[ip].playerCardsTurned.length);
         this.moves[ip] = [];
 
+        // setup new game object and return it
         this.games[ip] = {
             createdTimestamp: Date.now(),
             playerCardsTurned: [],
@@ -65,65 +72,66 @@ module.exports = class Database {
     }
 
     gameHasEnded(gameState) {
+        // whether an ongoing game should be considered finished, depending on how many cards have been matched to this point
         const game = gameState
         if (game) {
-            /*console.log([...game.playerCardsTurned, ...game.opponentCardsTurned][0]);
-            console.log([...game.playerCardsTurned, ...game.opponentCardsTurned].length);
-            console.log((game.board.length / 2));*/
+            // for a game to be done, the amount of cards matched must equal half the board size, since there is exactly two of every card
             return [...game.playerCardsTurned, ...game.opponentCardsTurned].length === (game.board.length / 2);
         }
         return false;
     }
 
     async getGameState(ip) {
+        // get the game state associated with the given ip address and merge relevant data into it
         const gameState = this.games[ip];
         if (gameState) gameState.points = await this.getPoints(ip);
         return gameState;
     }
 
     async saveGameState(ip, newGameState) {
+        // save the provided game state to the provided ip address
         if (await this.hasOngoingGame(ip)) this.games[ip] = newGameState;
     }
 
     moreCardsToTurn(game) {
+        // whether there are more cards left to be matched in the deck
         const discoveredCards = [...game.playerCardsTurned, ...game.opponentCardsTurned];
         return discoveredCards.length < game.board.length / 2;
     }
 
     cardIsNotAlreadyTurned(game, card) {
+        // whether a provided card has already been matched
         const discoveredCards = [...game.playerCardsTurned, ...game.opponentCardsTurned];
         return discoveredCards.indexOf(game.board[card]) === -1
     }
 
     async postPlayerMoves(ip, move1, move2) {
+        // handle the given players moves
         if (await this.hasOngoingGame(ip)) {
             const game = await this.getGameState(ip);
             if (!this.moves[ip]) this.moves[ip] = [];
             this.moves[ip].push(move1, move2);
-            //console.log("moves: " + game.board[move1] + ", " + game.board[move2]);
-            //console.log("board: " + game.board);
 
             if (this.moreCardsToTurn(game)) {
                 let opponentMoves;
                 if (game.board[move1] === game.board[move2] && this.cardIsNotAlreadyTurned(game, move2)) {
-                    //console.log(game.playerCardsTurned);
+                    // if the player has performed a match
                     game.playerCardsTurned.push(game.board[move1]);
                     let oldPoints = await this.getPoints(ip);
                     await this.setPoints(ip, oldPoints + 1);
-                    //console.log(game.opponentCardsTurned);
                 }
                 if (this.moreCardsToTurn(game)) {
-                    //console.log("executed!");
+                    // if there are still cards left over after the player, the ai gets to pick
                     opponentMoves = await this.getOpponentMoves(ip, move1, move2);
                     this.moves[ip].push(opponentMoves[0]);
                     this.moves[ip].push(opponentMoves[1]);
-                    //console.log("opponent moves: " + moves[0] + ", " + moves[1]);
+                    // if the ai gets a match
                     if (game.board[opponentMoves[0]] === game.board[opponentMoves[1]] && this.cardIsNotAlreadyTurned(game, opponentMoves[1])) 
                         game.opponentCardsTurned.push(game.board[opponentMoves[0]]);
                 }
+                // save the updated game state and return it
                 await this.saveGameState(ip, game);
                 let newState = { ...await this.getGameState(ip)};
-                //console.log("newState: " + newState);
                 newState.opponentMoves = opponentMoves;
                 return newState;
             }
@@ -132,12 +140,13 @@ module.exports = class Database {
     }
 
     async getOpponentMoves(ip, playerMove1, playerMove2) {
+        // calculate the ai opponents next move
         if (await this.hasOngoingGame(ip)) {
             const game = await this.getGameState(ip);
 
             const discoveredCards = [...game.playerCardsTurned, ...game.opponentCardsTurned];
 
-            //console.log("discorveredCards: " + discoveredCards);
+            // calculate which cards are left to choose from
             let undiscoveredIndexes = []
             let undiscoveredCards = [ ...discoveredCards ]
                 .reduce((array, elem, i) => {
@@ -145,51 +154,39 @@ module.exports = class Database {
                     const index2 = array.indexOf(elem, index1 + 1);
                     array[index1] = -1;
                     array[index2] = -1;
-                    //if (i === playerMove1 && i === playerMove2) array[i] = -1
                     return array;
                 }, [ ...game.board]);
             undiscoveredCards.forEach((elem, i, array) => {
-                //console.log(i !== playerMove1 && i !== playerMove2);
                 if (elem !== -1 && i !== playerMove1 && i !== playerMove2) {
                     undiscoveredIndexes.push(array.indexOf(elem, i));
                 }
             })
             undiscoveredCards = undiscoveredCards.filter(elem => elem !== -1);
-            //console.log("undiscovered cards: " + undiscoveredCards);
-            //console.log(game.board.length - discoveredCards.length === 2);
-            /*console.log("playerMoves: " + playerMove1, playerMove2);
-            console.log("undiscoveredIndexes: " + undiscoveredIndexes);*/
-            
+
+            // if there are only two cards left to turn, the ai choice is trivial
             if (game.board.length - discoveredCards.length === 2) return (undiscoveredIndexes[0], undiscoveredIndexes[1]);
 
-            //console.log([ playerMove1, playerMove2, ...discoveredCards ]);
-            /*this.moves[ip].forEach((move1, i) => {
-                this.moves[ip].forEach((move2, j) => {
-                    if (i !== j && game.board[move1] === game.board[move2] && discoveredCards.indexOf(game.board[move2]) === -1) {
-                        console.log("smart moves: " + move1, move2);
-                        return [move1, move2];
-                    }
-                });
-            });*/
+            // search the ai's memory for matches
             for (let i = 0; i < this.moves[ip].length; i++) {
                 const move1 = this.moves[ip][i];
                 for (let j = 0; j < this.moves[ip].length; j++) {
                     const move2 = this.moves[ip][j];
                     const playerMoves = [ playerMove1, playerMove2 ];
                     if (move1 !== move2 && game.board[move1] === game.board[move2] && discoveredCards.indexOf(game.board[move2]) === -1 && playerMoves.indexOf(move1) === -1 && playerMoves.indexOf(move2) === -1) {
-                        //console.log("smart moves: " + move1, move2);
+                        // ai remembered a match from two previously revealed cards
                         return [move1, move2];
                     }
                 }
             }
 
-            undiscoveredIndexes = shuffle(undiscoveredIndexes);
+            // no possible matches from memory, result to a random pick...
+            undiscoveredIndexes = shuffle(undiscoveredIndexes);  // shuffling the deck before picking at random
             
             const move1 = undiscoveredIndexes[Math.floor(Math.random() * undiscoveredIndexes.length)];
             let move2 = undiscoveredIndexes[Math.floor(Math.random() * undiscoveredIndexes.length)];
-            //if (move1 === undefined) return null;
             while (move2 === move1) move2 = undiscoveredIndexes[Math.floor(Math.random() * undiscoveredIndexes.length)];
-            //console.log(move1, move2);
+
+            // return random pick
             return [move1, move2];
         }
         return null;

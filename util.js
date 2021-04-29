@@ -2,6 +2,7 @@ const assert = require('assert');
 const axios = require('axios');
 
 function shuffle(deck) {
+    // implementation of Fisher-Yates shuffle, stolen from a previous project: https://github.com/kuff/discordify
     if (!Array.isArray(deck)) throw new Error("Parameter Must Be An Array");
     let randomizedDeck = [];
     let array = deck.slice();
@@ -14,6 +15,7 @@ function shuffle(deck) {
 }
 
 async function getMock() {
+    // database mock used for testing
     return {
         games: {
             "ip1": {
@@ -30,11 +32,11 @@ async function getMock() {
 }
 
 async function getDogs(board) {
+    // retreive random dog pictures from dog.ceo
     assert(board.length % 2 === 0, 'uneven number of cards!');
     const numberOfDogs = board.length / 2;
 
     const dogRequest = await axios.get('https://dog.ceo/api/breeds/image/random/' + numberOfDogs, { timeout: 1000 });
-    //console.log(dogRequest.data.message);
 
     return dogRequest.data.message;
 }
@@ -44,6 +46,7 @@ module.exports = {
     shuffle: shuffle,
 
     generateBoard: () => {
+        // "generate" the board by shuffling an ordered array
         sortedBoard = [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7]
         return shuffle(sortedBoard);
     },
