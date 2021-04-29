@@ -53,6 +53,7 @@ module.exports = class Database {
     async createNewGame(ip) {
         const oldPoints = await this.getPoints(ip);
         if (await this.hasOngoingGame(ip)) await this.setPoints(ip, oldPoints + this.games[ip].playerCardsTurned.length);
+        this.moves[ip] = [];
 
         this.games[ip] = {
             createdTimestamp: Date.now(),
@@ -174,7 +175,8 @@ module.exports = class Database {
                 const move1 = this.moves[ip][i];
                 for (let j = 0; j < this.moves[ip].length; j++) {
                     const move2 = this.moves[ip][j];
-                    if (i !== j && move1 !== move2 && game.board[move1] === game.board[move2] && [ game.board[playerMove1], game.board[playerMove2], ...discoveredCards ].indexOf(game.board[move2]) === -1) {
+                    const playerMoves = [ playerMove1, playerMove2 ];
+                    if (move1 !== move2 && game.board[move1] === game.board[move2] && discoveredCards.indexOf(game.board[move2]) === -1 && playerMoves.indexOf(move1) === -1 && playerMoves.indexOf(move2) === -1) {
                         //console.log("smart moves: " + move1, move2);
                         return [move1, move2];
                     }
