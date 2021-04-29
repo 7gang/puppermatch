@@ -34,7 +34,7 @@ async function getDogs(board) {
     const numberOfDogs = board.length / 2;
 
     const dogRequest = await axios.get('https://dog.ceo/api/breeds/image/random/' + numberOfDogs, { timeout: 1000 });
-    console.log(dogRequest.data.message);
+    //console.log(dogRequest.data.message);
 
     return dogRequest.data.message;
 }

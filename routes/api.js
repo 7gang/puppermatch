@@ -13,9 +13,9 @@ router.get('/getgame', async function(req, res, next) {
   const ip = req.ip;
   
   let gameState = await db.getGameState(ip);
-  console.log(gameState);
+  //console.log(gameState);
   if (gameState === undefined || db.gameHasEnded(gameState)) {
-    console.log("TRIGGERED!");
+    //console.log("TRIGGERED!");
     await db.createNewGame(ip);
     gameState = await db.getGameState(ip);
     gameState.dogs = await getDogs(gameState.board);
@@ -32,7 +32,7 @@ router.post('/makemove', async function(req, res, next) {
 
     const newState = await db.postPlayerMoves(ip, moves[0], moves[1]);
     newState.dogs = undefined; newState.board = undefined; newState.createdTimestamp = undefined;
-    console.log(newState);
+    //console.log(newState);
     res.send(newState);
   } catch(error) {
     res.sendStatus(400);

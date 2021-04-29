@@ -1,4 +1,6 @@
+const mongoose = require('mongoose');
 const { generateBoard, shuffle } = require('./util');
+const { mongodb_connection_string } = require('./config.json');
 
 module.exports = class Database {
 
@@ -8,6 +10,38 @@ module.exports = class Database {
     constructor(games, points) {
         this.games = games;
         this.points = points;
+
+        mongoose.connect(mongodb_connection_string, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            useFindAndModify: false
+        }).then(() => console.log('mongoose connected!'));
+
+        this.HighScore = mongoose.model('HighScore', mongoose.Schema({
+            _id: String,
+            value: Number
+        }));
+    }
+
+    async getPoints(ip) {
+        let result = await this.HighScore.find({ _id: ip });
+        //console.log(result[0]);
+        if (!result || !result[0]) {
+            const NewHighScore = new this.HighScore({
+                _id: ip,
+                value: 1
+            });
+            await NewHighScore.save(error => console.log(error));
+            result = await this.HighScore.find({ _id: ip });
+        }
+        //console.log(result[0].value);
+        //if (this.games[ip]) console.log('Actual value: ' + this.games[ip].playerCardsTurned.length);
+        return result[0].value;
+    }
+
+    async setPoints(ip, val) {
+        console.log('Should be value: ' + val);
+        await this.HighScore.findByIdAndUpdate({ _id: ip }, { value: val });
     }
 
     async hasOngoingGame(ip) {
@@ -16,8 +50,8 @@ module.exports = class Database {
     }
 
     async createNewGame(ip) {
-        if (await this.hasOngoingGame(ip)) this.points[ip] += this.games[ip].playerCardsTurned.length;
-        else if (this.points[ip] === undefined) this.points[ip] = 0;
+        const oldPoints = await this.getPoints(ip);
+        if (await this.hasOngoingGame(ip)) await this.setPoints(ip, oldPoints + this.games[ip].playerCardsTurned.length);
 
         this.games[ip] = {
             createdTimestamp: Date.now(),
@@ -41,7 +75,7 @@ module.exports = class Database {
 
     async getGameState(ip) {
         const gameState = this.games[ip];
-        if (gameState) gameState.points = this.points[ip];
+        if (gameState) gameState.points = await this.getPoints(ip);
         return gameState;
     }
 
@@ -68,10 +102,10 @@ module.exports = class Database {
             if (this.moreCardsToTurn(game)) {
                 let opponentMoves;
                 if (game.board[move1] === game.board[move2] && this.cardIsNotAlreadyTurned(game, move2)) {
-                    //console.log("TRIG");
                     //console.log(game.playerCardsTurned);
                     game.playerCardsTurned.push(game.board[move1]);
-                    this.points[ip]++;
+                    let oldPoints = await this.getPoints(ip);
+                    await this.setPoints(ip, oldPoints + 1);
                     //console.log(game.opponentCardsTurned);
                 }
                 if (this.moreCardsToTurn(game)) {
