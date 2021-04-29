@@ -48,9 +48,11 @@ function cardOpen(card, isPlayer = true) {
         if([...newState.playerCardsTurned, ...newState.opponentCardsTurned].length === 8){
             prompt.innerHTML = "Game over! Refresh to start a new game.";
         }
-
-        performOpponentMove(newState.opponentMoves);
-        gameState = newState;
+        setTimeout(function(){
+          performOpponentMove(newState.opponentMoves);
+          gameState = newState;
+        },1300);
+        
       })
       .catch(error => console.log(error) /* handle if an api call fails for any reason... */ );
     if(selectedCards[0].type === selectedCards[1].type){
@@ -98,7 +100,6 @@ function enablenotMatched(){
 }
 
 function performOpponentMove(moves) {
-  setTimeout(function() {
     if (!moves) return;
     card1 = backs[moves[0]];
     card2 = backs[moves[1]];
@@ -126,8 +127,6 @@ function performOpponentMove(moves) {
     console.log(card2);*/
     cardOpen(card1, false);
     cardOpen(card2, false);
-  }, 500);
-
 }
 
 function postMoves(move1, move2) {
