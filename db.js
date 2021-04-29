@@ -6,6 +6,7 @@ module.exports = class Database {
 
     games = {};
     points = {};
+    moves = {};
 
     constructor(games, points) {
         this.games = games;
@@ -40,7 +41,7 @@ module.exports = class Database {
     }
 
     async setPoints(ip, val) {
-        console.log('Should be value: ' + val);
+        //console.log('Should be value: ' + val);
         await this.HighScore.findByIdAndUpdate({ _id: ip }, { value: val });
     }
 
@@ -96,6 +97,8 @@ module.exports = class Database {
     async postPlayerMoves(ip, move1, move2) {
         if (await this.hasOngoingGame(ip)) {
             const game = await this.getGameState(ip);
+            if (!this.moves[ip]) this.moves[ip] = [];
+            this.moves[ip].push(move1, move2);
             //console.log("moves: " + game.board[move1] + ", " + game.board[move2]);
             //console.log("board: " + game.board);
 
@@ -111,6 +114,8 @@ module.exports = class Database {
                 if (this.moreCardsToTurn(game)) {
                     //console.log("executed!");
                     opponentMoves = await this.getOpponentMoves(ip, move1, move2);
+                    this.moves[ip].push(opponentMoves[0]);
+                    this.moves[ip].push(opponentMoves[1]);
                     //console.log("opponent moves: " + moves[0] + ", " + moves[1]);
                     if (game.board[opponentMoves[0]] === game.board[opponentMoves[1]] && this.cardIsNotAlreadyTurned(game, opponentMoves[1])) 
                         game.opponentCardsTurned.push(game.board[opponentMoves[0]]);
@@ -130,6 +135,7 @@ module.exports = class Database {
             const game = await this.getGameState(ip);
 
             const discoveredCards = [...game.playerCardsTurned, ...game.opponentCardsTurned];
+
             //console.log("discorveredCards: " + discoveredCards);
             let undiscoveredIndexes = []
             let undiscoveredCards = [ ...discoveredCards ]
@@ -154,6 +160,26 @@ module.exports = class Database {
             console.log("undiscoveredIndexes: " + undiscoveredIndexes);*/
             
             if (game.board.length - discoveredCards.length === 2) return (undiscoveredIndexes[0], undiscoveredIndexes[1]);
+
+            //console.log([ playerMove1, playerMove2, ...discoveredCards ]);
+            /*this.moves[ip].forEach((move1, i) => {
+                this.moves[ip].forEach((move2, j) => {
+                    if (i !== j && game.board[move1] === game.board[move2] && discoveredCards.indexOf(game.board[move2]) === -1) {
+                        console.log("smart moves: " + move1, move2);
+                        return [move1, move2];
+                    }
+                });
+            });*/
+            for (let i = 0; i < this.moves[ip].length; i++) {
+                const move1 = this.moves[ip][i];
+                for (let j = 0; j < this.moves[ip].length; j++) {
+                    const move2 = this.moves[ip][j];
+                    if (i !== j && move1 !== move2 && game.board[move1] === game.board[move2] && [ game.board[playerMove1], game.board[playerMove2], ...discoveredCards ].indexOf(game.board[move2]) === -1) {
+                        //console.log("smart moves: " + move1, move2);
+                        return [move1, move2];
+                    }
+                }
+            }
 
             undiscoveredIndexes = shuffle(undiscoveredIndexes);
             
