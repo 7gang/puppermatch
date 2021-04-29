@@ -126,7 +126,7 @@ function performOpponentMove(moves) {
 function postMoves(move1, move2) {
   // return a promise, eventually returning the updated game state as the result of the player's moves
     return new Promise((resolve, reject) => {
-        fetch('http://localhost:3000/api/makemove', {
+        fetch('http://pupper.papupa.com/api/makemove', {
             method: 'POST',
             mode: 'cors',
             cache: 'no-cache',
@@ -141,7 +141,7 @@ function postMoves(move1, move2) {
     });
 };
 
-fetch('http://localhost:3000/api/getgame')
+fetch('http://pupper.papupa.com/api/getgame')
     .then(result => result.json())
     .then(data => {
         var elem = document.getElementById("connectionBox");
