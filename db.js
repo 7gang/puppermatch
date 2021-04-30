@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { generateBoard, shuffle } = require('./util');
-const { mongodb_connection_string } = require('./config.json');
+const { mongodb_connection_string } = require('./config-empty.json');
 
 module.exports = class Database {
 
@@ -13,7 +13,7 @@ module.exports = class Database {
         this.points = points;
 
         // connection to MongoDB Atlas cluster instance
-        mongoose.connect(mongodb_connection_string, {
+        if (mongodb_connection_string) mongoose.connect(mongodb_connection_string, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             useFindAndModify: false
